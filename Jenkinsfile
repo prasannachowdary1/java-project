@@ -10,7 +10,7 @@ pipeline{
 }
 post{
   always{
-    archiveartifacts artifacts 'dist/*.jar'
+    archiveartifacts artifacts: 'dist/*.jar'
 
 
   }
