@@ -9,7 +9,7 @@ pipeline{
 
     stage('Unit Tests') {
       steps{
-         sh 'ant -f test.cml -v'
+         sh 'ant -f test.xml -v'
          junit 'reports/result.xml'
       }
 
