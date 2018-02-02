@@ -44,7 +44,8 @@ pipeline{
          label 'apache'
       }
       steps{
-        sh 'wget 192.168.33.88/rectangle/all/rectangle_${env.BUILD_NUMBER}.jar'
+        sh "curl -v --data-binary rectangle_${env.BUILD_NUMBER}.jar -X PUT \http://192.168.33.88/rectangle/all/rectangle_${env.BUILD_NUMBER}.jar\""
+
         sh 'java -jar rectangle_${env.BUILD_NUMBER}.jar 2 3'
       }
 
