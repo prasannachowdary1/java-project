@@ -19,7 +19,14 @@ pipeline{
 
     sh 'ant -f build.xml -v'
     }
-}
+    }
+    stage('deploy'){
+    steps {
+
+        sh "cp dist/rectnagle_${env.BUILD_NUMBER}.jar /var/www/html/rectangle/all"
+    }
+
+    }
 }
 post{
   always{
@@ -27,7 +34,5 @@ post{
 
 
   }
-
 }
-
 }
