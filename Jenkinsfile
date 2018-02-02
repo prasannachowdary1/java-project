@@ -3,7 +3,17 @@ pipeline{
   options{
     buildDiscarder(logRotator(numToKeepStr: '2' , artifactNumToKeepStr: '1'))
   }
+
+
    stages{
+
+    stage('Unit Tests') {
+      steps{
+         sh 'ant -f test.cml -v'
+         junit 'reports/result.xml'
+      }
+
+    }
     stage('build'){
     steps {
 
