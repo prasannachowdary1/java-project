@@ -4,8 +4,7 @@ pipeline{
     buildDiscarder(logRotator(numToKeepStr: '2' , artifactNumToKeepStr: '1'))
   }
    stages{
-
-    stage('Unit Tests') {
+      stage('Unit Tests') {
       agent{
 
         label 'apache'
@@ -43,6 +42,9 @@ pipeline{
     stage('Running on CentOs'){
       agent{
          label 'apache'
+      }
+      when{
+        branch 'development'
       }
       steps{
        sh "wget http://192.168.33.88/rectangle/all/rectangle_${env.BUILD_NUMBER}.jar"
