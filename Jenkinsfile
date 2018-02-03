@@ -3,8 +3,6 @@ pipeline{
   options{
     buildDiscarder(logRotator(numToKeepStr: '2' , artifactNumToKeepStr: '1'))
   }
-
-
    stages{
 
     stage('Unit Tests') {
@@ -16,7 +14,6 @@ pipeline{
          sh 'ant -f test.xml -v'
          junit 'reports/result.xml'
       }
-
     }
     stage('build'){
       agent{
@@ -30,7 +27,6 @@ pipeline{
     post{
       success{
         archiveArtifacts artifacts: 'dist/*.jar' , fingerprint:true
-
       }
     }
     }
@@ -43,7 +39,6 @@ pipeline{
 
         sh "cp dist/rectangle_${env.BUILD_NUMBER}.jar /var/www/html/rectangle/all/"
     }
-
     }
     stage('Running on CentOs'){
       agent{
@@ -53,7 +48,6 @@ pipeline{
        sh "wget http://192.168.33.88/rectangle/all/rectangle_${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.BUILD_NUMBER}.jar 2 3"
       }
-
     }
     stage('testing on Debian'){
        agent{
@@ -62,8 +56,16 @@ pipeline{
        }
        steps{
          sh "wget http://192.168.33.88/rectangle/all/rectangle_${env.BUILD_NUMBER}.jar"
-         sh "java -jar rectangle_${env.BUILD_NUMBER}.jar 4 5"
-       }
+         sh "java -jar rectangle_${env.BUILD_NUMBER}.jar 4 5"       }
+
+    }
+
+    stage('Promoting to Green after successful functional Testing'){
+        steps{
+
+            sh "cp /var/www/html/rectangle/all/rectangle_${env.BUILD_NUMBER}.jar /var/www/html/rectangle/green/rectangle_${env.BUILD_NUMBER}.jar"
+
+        }
 
     }
 }
