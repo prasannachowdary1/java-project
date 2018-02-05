@@ -35,8 +35,8 @@ pipeline{
         label 'apache'
       }
     steps {
-
-        sh "cp dist/rectangle_${env.BUILD_NUMBER}.jar /var/www/html/rectangle/all/"
+        sh 'mkdir /var/www/html/rectangles/all/${env.BRANCH_NAME}'
+        sh "cp dist/rectangle_${env.BUILD_NUMBER}.jar /var/www/html/rectangle/all/${env.BRANCH_NAME}"
     }
     }
     stage('Running on CentOs'){
@@ -45,10 +45,10 @@ pipeline{
       }
 
       when{
-        branch 'development'
+        branch 'master'
       }
       steps{
-       sh "wget http://192.168.33.88/rectangle/all/rectangle_${env.BUILD_NUMBER}.jar"
+       sh "wget http://192.168.33.88/rectangle/all/${env.BRANCH_NAME}/rectangle_${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.BUILD_NUMBER}.jar 2 3"
       }
     }
@@ -58,7 +58,7 @@ pipeline{
             docker 'openjdk:8u121-jre'
        }
        steps{
-         sh "wget http://192.168.33.88/rectangle/all/rectangle_${env.BUILD_NUMBER}.jar"
+         sh "wget http://192.168.33.88/rectangle/all/${env.BRANCH_NAME}/rectangle_${env.BUILD_NUMBER}.jar"
          sh "java -jar rectangle_${env.BUILD_NUMBER}.jar 4 5"       }
 
     }
@@ -72,8 +72,29 @@ pipeline{
             sh "cp /var/www/html/rectangle/all/rectangle_${env.BUILD_NUMBER}.jar /var/www/html/rectangle/green/rectangle_${env.BUILD_NUMBER}.jar"
 
         }
+     }
 
+    stage('Promote Development branch to Master'){
+      agent{
+        label 'apache'
+      }
+      when {
+        branch 'development'
+      }
+      steps{
+        echo "Stashing Any local changes"
+        sh 'git stash'
+        echo "Checkout into Dev Branch"
+        sh 'git checkout development'
+        echo "Checkout into master"
+        sh 'git checkout master'
+        echo 'Merging Development into Master'
+        sh 'git merge development'
+        echo 'Pushing into origin master'
+        sh 'git pusg origin master'
+      }
     }
+
 }
 
 }
